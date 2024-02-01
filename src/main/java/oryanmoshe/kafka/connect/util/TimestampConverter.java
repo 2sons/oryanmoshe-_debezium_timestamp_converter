@@ -33,7 +33,7 @@ public class TimestampConverter implements CustomConverter<SchemaBuilder, Relati
     private static final String DATETIME_REGEX = "(?<datetime>(?<date>(?:(?<year>\\d{4})-(?<month>\\d{1,2})-(?<day>\\d{1,2}))|(?:(?<day2>\\d{1,2})\\/(?<month2>\\d{1,2})\\/(?<year2>\\d{4}))|(?:(?<day3>\\d{1,2})-(?<month3>\\w{3})-(?<year3>\\d{4})))?(?:\\s?T?(?<time>(?<hour>\\d{1,2}):(?<minute>\\d{1,2}):(?<second>\\d{1,2})\\.?(?<milli>\\d{0,7})?)?))";
     private static final Pattern regexPattern = Pattern.compile(DATETIME_REGEX);
 
-    public String strDatetimeFormat, strDateFormat, strTimeFormat;
+    public String strDatetimeFormat, strDateFormat, strTimeFormat, strTimezoneFormat;
     public Boolean debug;
 
 //    private final SchemaBuilder datetimeSchema = SchemaBuilder.string().optional().name("oryanmoshe.time.DateTimeString");
@@ -51,10 +51,12 @@ public class TimestampConverter implements CustomConverter<SchemaBuilder, Relati
         this.strTimeFormat = props.getProperty("format.time", DEFAULT_TIME_FORMAT);
         this.simpleTimeFormatter = new SimpleDateFormat(this.strTimeFormat);
 
+        this.strTimezoneFormat = props.getProperty("format.timezone", "UTC");
+
         this.debug = props.getProperty("debug", "false").equals("true");
 
-        this.simpleDatetimeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        this.simpleTimeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.simpleDatetimeFormatter.setTimeZone(TimeZone.getTimeZone(this.strTimezoneFormat));
+        this.simpleTimeFormatter.setTimeZone(TimeZone.getTimeZone(this.strTimezoneFormat));
 
         if (this.debug)
             System.out.printf(
